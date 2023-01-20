@@ -13,16 +13,17 @@ except Exception as e:
 
 def first_function_execute(**context):
     print("first_function_execute   ")
-    context['ti'].xcom_push(key='mykey', value="first_function_execute says Hello ")
-
-def second_function_execute(**context):
-    instance = context.get("ti").xcom_pull(key="mykey")
     data = [{"name":"Oliver","title":"Data Engineer"}, { "name":"Tori","title":"Marketing Manger"},]
     df = pd.DataFrame(data=data)
+    ## Passing df from first function to second function
+    context['ti'].xcom_push(key='mykey', value=df)
+
+def second_function_execute(**context):
+    ## Getting df from first function
+    instance = context.get("ti").xcom_pull(key="mykey")
     print('@'*66)
-    print(df.head())
+    print(instance.head())
     print('@' * 66)
-    print("I am in second_function_execute got value :{} from Function 1  ".format(instance))
 
 
 with DAG(
